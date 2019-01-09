@@ -1,0 +1,42 @@
+.wrapper{
+	display:inline-block;
+	vertical-align:top;
+	position:relative;
+	margin-right:5px;
+	margin-left:5px;
+}
+.cursor-canvas{
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:99;
+}
+.image-canvas{
+	position:absolute;
+	top:0;
+	left:0;
+}
+.helper-canvas{
+	border:1px solid blue;
+}
+
+#sidebar{
+	float:left;
+	width:200px;
+}
+fieldset{
+	border:1px solid #666;
+}
+fieldset[disabled]{
+	display:none;
+}
+fieldset label{
+	display:block;
+}
+fieldset label>span{
+	display:inline-block;
+	width:150px;
+}
+fieldset input[type="number"]{
+	width:40px;
+}

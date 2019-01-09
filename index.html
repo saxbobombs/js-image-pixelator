@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>js-image-pixelator</title>
+	<script type="text/javascript" src="script.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<img id="img" src="img.png" alt="">
+
+	<div id="sidebar">
+		<fieldset>
+			<legend>cursor</legend>
+			<label><input type="radio" id="cursor-circle" name="cursor" value="circle" checked> circle</label>
+			<label><input type="radio" id="cursor-square" name="cursor" value="square"> square</label>
+			
+		</fieldset>
+
+		<fieldset id="cursor-circle-settings">
+			<legend>circle cursor</legend>
+			<label><span>radius:</span> <input type="number" id="circle-cursor-radius"></label>
+		</fieldset>
+
+		<fieldset id="cursor-square-settings" disabled>
+			<legend>square cursor</legend>
+			<label><span>size:</span> <input type="number" id="square-cursor-size"></label>
+		</fieldset>
+
+		<fieldset id="main-settings">
+			<legend>pixel settings</legend>
+			<label><span>ratio:</span> <input type="number" id="pixel-ratio"></label>
+		</fieldset>
+
+		<fieldset>
+			<legend>&nbsp;</legend>
+			<button id="undo">undo</button>
+			<button id="reset">reset</button>
+		</fieldset>
+	</div>
+</body>
+</html>
