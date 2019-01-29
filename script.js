@@ -45,11 +45,14 @@ function _init() {
 	cursorCanvas.className = 'cursor-canvas';
 	cursorCanvas.width = img.width;
 	cursorCanvas.height = img.height;
+
 	cursorCanvas.addEventListener('mousemove', function() {
 		_drawCursor.apply(this, arguments);
 		_tryToApplyTool.apply(this, arguments);
 	}, false);
+	
 	cursorCanvas.addEventListener('mousedown', function(e) {
+		console.log('mousedown');
 		if (e.button === 0) {
 			leftClickHold = true;
 			_tryToApplyTool.apply(this, arguments);
@@ -59,20 +62,25 @@ function _init() {
 		}
 	}, false);
 
+	cursorCanvas.addEventListener('mouseup', function(e) {
+		console.log('mouseup');
+		if (leftClickHold) {
+			_updateImage.apply(this, arguments);
+		}
+
+		leftClickHold = false;
+		e.stopPropagation(); // prevent loop
+	}, false);
+	
 	img.addEventListener('mouseup', function(e) {
 		if (e.button === 0) {
 			cursorCanvas.style.display = 'block';
 			imageCanvas.style.display = 'block';
 		}
 	}, false);
-	cursorCanvas.addEventListener('mouseup', function(e) {
-		if (leftClickHold) {
-			_updateImage.apply(this, arguments);
-		}
-
-		leftClickHold = false;
-		e.stopPropagation();
-		e.preventDefault();
+	
+	document.addEventListener('mouseup', function(){
+		cursorCanvas.dispatchEvent(new Event('mouseup')); // stop current cursor apply
 	}, false);
 
 	document.body.appendChild(wrapper);
