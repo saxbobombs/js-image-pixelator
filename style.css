@@ -4,6 +4,7 @@
 	position:relative;
 	margin-right:5px;
 	margin-left:5px;
+	user-select: none;
 }
 .cursor-canvas{
 	position:absolute;
