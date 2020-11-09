@@ -3,13 +3,13 @@ pixelate images via javascript/canvas
 
 ## example
 
-http://henman.de/scripts/js-image-pixelator/
+https://saxoneee.github.io/js-image-pixelator/src/
 
-## server
+## run
 
-use `npm install` to install a small node js server, start it with `npm start`. the app will be available in your browser at `http://localhost:8080`
-
-
+* run `npm install` once
+* run `npm run dev`
+* go to http://localhost:8000
 
 _only tested with google chrome on windows 10_
 
