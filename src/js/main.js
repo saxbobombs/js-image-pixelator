@@ -2,7 +2,7 @@ window.addEventListener('load', function() {
 	_init();
 }, false);
 
-var pixelRatio = 8,
+var pixelSize = 8,
 	circleCursorRadius = 50,
 	squareCursorSize = 100,
 	showHelper = false,
@@ -11,7 +11,7 @@ var pixelRatio = 8,
 
 var inputCircleCursorRadius = null,
 	inputSquareCursorSize = null,
-	inputPixelRatio = null;
+	inputPixelSize = null;
 
 var img = null,
 	wrapper = document.createElement('div'),
@@ -47,12 +47,11 @@ function _init() {
 	cursorCanvas.height = img.height;
 
 	cursorCanvas.addEventListener('mousemove', function() {
-		_drawCursor.apply(this, arguments);
+		_drawCursorCanvas.apply(this, arguments);
 		_tryToApplyTool.apply(this, arguments);
 	}, false);
 	
 	cursorCanvas.addEventListener('mousedown', function(e) {
-		console.log('mousedown');
 		if (e.button === 0) {
 			leftClickHold = true;
 			_tryToApplyTool.apply(this, arguments);
@@ -63,7 +62,6 @@ function _init() {
 	}, false);
 
 	cursorCanvas.addEventListener('mouseup', function(e) {
-		console.log('mouseup');
 		if (leftClickHold) {
 			_updateImage.apply(this, arguments);
 		}
@@ -171,9 +169,9 @@ function _applyCursorToHelper() {
  * apply helper to image canvas
  */
 function _applyHelperToImage(e) {
-	var _posX = e.offsetX,
-		_posY = e.offsetY;
-
+	var _posX = Math.floor(e.offsetX/pixelSize) * pixelSize,
+		_posY = Math.floor(e.offsetY/pixelSize) * pixelSize;
+		
 	switch (cursorType) {
 		case 'circle':
 			_posX -= circleCursorRadius;
@@ -194,7 +192,7 @@ function _applyHelperToImage(e) {
 function _applyToolToHelper() {
 	switch (tool) {
 		case '8bit':
-			pixelCanvasToScale(helperCanvas, pixelRatio);
+			pixelCanvasToScale(helperCanvas, pixelSize);
 	}
 }
 
@@ -202,8 +200,8 @@ function _applyToolToHelper() {
  * copy imagepart selected via cursor to helper
  */
 function _copyCursorToHelper(e) {
-	var _posX = e.offsetX;
-	var _posY = e.offsetY;
+	var _posX = Math.floor(e.offsetX/pixelSize) * pixelSize;
+	var _posY = Math.floor(e.offsetY/pixelSize) * pixelSize;
 
 	switch (cursorType) {
 		case 'circle':
@@ -218,7 +216,7 @@ function _copyCursorToHelper(e) {
 /**
  * draw current cursor type to cursor canvas on mouse move
  */
-function _drawCursor(e) {
+function _drawCursorCanvas(e) {
 	cursorContext.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
 
 	switch (cursorType) {
@@ -241,33 +239,38 @@ function _drawCursor(e) {
 
 /**
  * based on https://github.com/rogeriopvl/8bit
+ * 
+ * pixelate the selected image part via drawing it tiny and then stretch the tiny version to its original size
+ * 
+ * @param cursorCanvas {HTMLCanvasElement}
+ * @param pixelSize {integer}
  */
-var pixelCanvasToScale = function(src, scale) {
-	scale *= 0.01;
-
-	var _srcContext = src.getContext('2d');
+var pixelCanvasToScale = function(cursorCanvas, pixelSize) {
+	pixelSize = 1 / pixelSize;
+	
+	var _cursorCanvasContext = cursorCanvas.getContext('2d');
 	var _helperCanvas = document.createElement('canvas'),
 		_helperContext = _helperCanvas.getContext('2d');
 
-	var _scaledW = src.width * scale,
-		_scaledH = src.height * scale;
+	var _scaledW = cursorCanvas.width * pixelSize,
+		_scaledH = cursorCanvas.height * pixelSize;
 
 	_helperCanvas.width = _scaledW;
 	_helperCanvas.height = _scaledH;
 
-	_srcContext.mozImageSmoothingEnabled = false;
-	_srcContext.webkitImageSmoothingEnabled = false;
-	_srcContext.imageSmoothingEnabled = false;
+	_cursorCanvasContext.mozImageSmoothingEnabled = false;
+	_cursorCanvasContext.webkitImageSmoothingEnabled = false;
+	_cursorCanvasContext.imageSmoothingEnabled = false;
 
-	_helperContext.drawImage(src, 0, 0, _scaledW, _scaledH); // draw tiny version
+	_helperContext.drawImage(cursorCanvas, 0, 0, _scaledW, _scaledH);
 
-	_srcContext.clearRect(0, 0, src.width, src.height);
-	_srcContext.drawImage(_helperCanvas, 0, 0, _scaledW, _scaledH, 0, 0, src.width, src.height);
+	_cursorCanvasContext.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+	_cursorCanvasContext.drawImage(_helperCanvas, 0, 0, _scaledW, _scaledH, 0, 0, cursorCanvas.width, cursorCanvas.height);
 
 	// reset to default
-	_srcContext.mozImageSmoothingEnabled = true;
-	_srcContext.webkitImageSmoothingEnabled = true;
-	_srcContext.imageSmoothingEnabled = true;
+	_cursorCanvasContext.mozImageSmoothingEnabled = true;
+	_cursorCanvasContext.webkitImageSmoothingEnabled = true;
+	_cursorCanvasContext.imageSmoothingEnabled = true;
 };
 
 /**
@@ -331,10 +334,10 @@ function _initForm() {
 		_reInitHelperCanvas();
 	}, false);
 
-	inputPixelRatio = document.getElementById('pixel-ratio');
-	inputPixelRatio.value = pixelRatio;
-	inputPixelRatio.addEventListener('input', function() {
-		pixelRatio = this.value;
+	inputPixelSize = document.getElementById('pixel-size');
+	inputPixelSize.value = pixelSize;
+	inputPixelSize.addEventListener('input', function() {
+		pixelSize = this.value;
 	}, false);
 
 	var _btnUndo = document.getElementById('undo'),
