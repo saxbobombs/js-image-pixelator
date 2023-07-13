@@ -9,7 +9,7 @@ https://saxoneee.github.io/js-image-pixelator/src/
 
 * run `npm install` once
 * run `npm run dev`
-* go to http://localhost:8000
+* go to http://localhost:9001
 
 _only tested with google chrome on windows 10_
 

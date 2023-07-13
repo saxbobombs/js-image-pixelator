@@ -1,5 +1,7 @@
 var app = app || {};
 
+app.runtimeCache = {};
+
 ((app) => {
 	window.addEventListener('load', function() {
 		_init();
@@ -19,8 +21,11 @@ var app = app || {};
 		helperContext = helperCanvas.getContext('2d'),
 		leftClickHold = false,
 		imageHistory = [],
-		// TODO
-		basePosition = [0,0]; // calculate the position of the image part to redraw based on this
+		upload = null;
+
+	app.runtimeCache = {
+		basePosition: null // calculate the position of the image part to redraw based on this
+	};
 	
 	/**
 	 * init app
@@ -83,6 +88,8 @@ var app = app || {};
 		if (app.config.showHelper) {
 			document.body.appendChild(helperCanvas);
 		}
+
+		upload = document.querySelector('#upload');
 	
 		_initForm();
 	}
@@ -167,8 +174,8 @@ var app = app || {};
 	 * apply helper to image canvas
 	 */
 	function _applyHelperToImage(e) {
-		var _posX = app.utils.position.getPixelPosition(e.offsetX),
-			_posY = app.utils.position.getPixelPosition(e.offsetY);
+		var _posX = app.utils.position.getPixelPosition(e.offsetX, 'x'),
+			_posY = app.utils.position.getPixelPosition(e.offsetY, 'y');
 			
 		switch (app.config.cursorType) {
 			case 'circle':
@@ -198,8 +205,14 @@ var app = app || {};
 	 * copy imagepart selected via cursor to helper
 	 */
 	function _copyCursorToHelper(e) {
-		var _posX = app.utils.position.getPixelPosition(e.offsetX);
-		var _posY = app.utils.position.getPixelPosition(e.offsetY);
+		if(!app.runtimeCache.basePosition) {
+			app.runtimeCache.basePosition = {
+				x: e.offsetX % app.config.pixelSize,
+				y: e.offsetY % app.config.pixelSize,
+			}
+		}
+		var _posX = app.utils.position.getPixelPosition(e.offsetX, 'x');
+		var _posY = app.utils.position.getPixelPosition(e.offsetY, 'y');
 	
 		switch (app.config.cursorType) {
 			case 'circle':
@@ -363,6 +376,24 @@ var app = app || {};
 	
 		_btnUndo.addEventListener('click', _undo, false);
 		_btnReset.addEventListener('click', _reset, false);
+
+		upload.addEventListener('change', () => {
+			const file = upload.files[0];
+			if (file) {
+				const afterLoad = () => {
+					imageCanvas.width = img.width;
+					imageCanvas.height = img.height;
+					cursorCanvas.width = img.width;
+					cursorCanvas.height = img.height;
+
+					img.removeEventListener('load', afterLoad);
+				}
+				
+				img.addEventListener('load', afterLoad, false);
+				img.src = URL.createObjectURL(file)
+
+			  }
+		})
 	}
 })(app);
 

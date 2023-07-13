@@ -12,7 +12,7 @@ module.exports = {
 		static: [
 			path.join(__dirname, 'src'),
 		],
-		port: 8000,
+		port: 9001,
 	},
 
 	plugins: [
