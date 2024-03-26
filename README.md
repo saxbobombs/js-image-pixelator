@@ -3,7 +3,7 @@ pixelate images via javascript/canvas
 
 ## example
 
-https://saxoneee.github.io/js-image-pixelator/src/
+https://saxbobombs.github.io/js-image-pixelator/src/
 
 ## run
 
